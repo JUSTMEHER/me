@@ -1,0 +1,176 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Inter, sans-serif;
+}
+
+body {
+  background: radial-gradient(circle at top,#020617,#000);
+  color: white;
+  min-height: 100vh;
+}
+
+/* ===== LOADER ===== */
+
+#loader {
+  position: fixed;
+  inset: 0;
+  background: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  flex-direction: column;
+}
+
+.runway {
+  width: 100%;
+  height: 4px;
+  background: repeating-linear-gradient(
+    to right,
+    white 0 40px,
+    transparent 40px 70px
+  );
+  opacity: .4;
+}
+
+.plane {
+  font-size: 3rem;
+  animation: takeoff 3s ease forwards;
+}
+
+.loading-text {
+  margin-top: 20px;
+  opacity: .7;
+}
+
+@keyframes takeoff {
+  from { transform: translateX(-200px); }
+  to { transform: translateX(120vw) translateY(-200px); }
+}
+
+/* ===== NAV ===== */
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 25px 80px;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+}
+
+.navbar nav a {
+  margin-left: 30px;
+  color: white;
+  text-decoration: none;
+  opacity: .7;
+}
+
+.navbar nav a:hover {
+  opacity: 1;
+}
+
+/* ===== HERO ===== */
+
+.hero {
+  display: flex;
+  padding: 80px;
+  align-items: center;
+  gap: 80px;
+}
+
+.hero-left h1 {
+  font-size: 3.5rem;
+}
+
+.hero-left span {
+  background: linear-gradient(90deg,#38bdf8,#facc15);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.subtitle {
+  margin-top: 20px;
+  font-size: 1.2rem;
+  opacity: .9;
+}
+
+.cta {
+  margin-top: 30px;
+}
+
+.cta button {
+  padding: 12px 25px;
+  background: linear-gradient(90deg,#38bdf8,#facc15);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.cta .secondary {
+  background: transparent;
+  border: 1px solid white;
+  color: white;
+}
+
+/* ===== PROFILE CARD ===== */
+
+.profile-card {
+  background: rgba(255,255,255,.05);
+  backdrop-filter: blur(20px);
+  padding: 25px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,.15);
+  text-align: center;
+  width: 300px;
+  box-shadow: 0 25px 80px rgba(0,0,0,.6);
+}
+
+.profile-card img {
+  width: 100%;
+  border-radius: 15px;
+  margin-bottom: 15px;
+}
+
+.social a {
+  margin: 0 8px;
+  font-size: 1.4rem;
+  color: white;
+}
+
+/* ===== INFO CARDS ===== */
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
+  padding: 40px 80px;
+  gap: 20px;
+}
+
+.card {
+  background: rgba(255,255,255,.05);
+  padding: 20px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.15);
+  text-align: center;
+  transition: .4s;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+}
+
+/* ===== MOBILE ===== */
+
+@media(max-width:900px) {
+  .hero {
+    flex-direction: column;
+    padding: 40px;
+  }
+
+  .navbar {
+    padding: 20px 40px;
+  }
+}
