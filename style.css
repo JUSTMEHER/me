@@ -10,49 +10,70 @@
 body {
   background: radial-gradient(circle at top,#020617,#000);
   color: white;
-  min-height: 100vh;
 }
 
-/* ===== LOADER ===== */
+/* ============ LOADER ============ */
 
 #loader {
   position: fixed;
   inset: 0;
-  background: black;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: #000;
   z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   flex-direction: column;
 }
 
 .runway {
-  width: 100%;
+  position: absolute;
+  bottom: 46%;
+  width: 120%;
   height: 4px;
   background: repeating-linear-gradient(
     to right,
-    white 0 40px,
+    rgba(56,189,248,.9) 0 40px,
     transparent 40px 70px
   );
-  opacity: .4;
 }
 
-.plane {
-  font-size: 3rem;
-  animation: takeoff 3s ease forwards;
+#planeSVG {
+  width: 120px;
+  position: absolute;
+  bottom: 45%;
+  left: -160px;
+  filter: drop-shadow(0 0 25px rgba(56,189,248,.9));
+  animation: takeoff 3.2s ease-in-out forwards;
 }
 
 .loading-text {
-  margin-top: 20px;
+  position: absolute;
+  bottom: 30%;
   opacity: .7;
 }
 
+/* plane path */
+
 @keyframes takeoff {
-  from { transform: translateX(-200px); }
-  to { transform: translateX(120vw) translateY(-200px); }
+
+  0% {
+    transform: translateX(-200px) rotate(0deg);
+  }
+
+  70% {
+    transform: translateX(65vw) rotate(0deg);
+  }
+
+  100% {
+    transform: translateX(120vw)
+               translateY(-200px)
+               rotate(-18deg);
+    opacity: 0;
+  }
+
 }
 
-/* ===== NAV ===== */
+/* ============ NAV ============ */
 
 .navbar {
   display: flex;
@@ -72,7 +93,7 @@ body {
   opacity: 1;
 }
 
-/* ===== HERO ===== */
+/* ============ HERO ============ */
 
 .hero {
   display: flex;
@@ -82,7 +103,7 @@ body {
 }
 
 .hero-left h1 {
-  font-size: 3.5rem;
+  font-size: 3.6rem;
 }
 
 .hero-left span {
@@ -109,13 +130,18 @@ body {
   cursor: pointer;
 }
 
-.cta .secondary {
-  background: transparent;
-  border: 1px solid white;
+.secondary {
+  background: transparent !important;
+  border: 1px solid white !important;
   color: white;
 }
 
-/* ===== PROFILE CARD ===== */
+.cta i {
+  font-size: 1.5rem;
+  margin-left: 15px;
+}
+
+/* ============ PROFILE CARD ============ */
 
 .profile-card {
   background: rgba(255,255,255,.05);
@@ -123,38 +149,37 @@ body {
   padding: 25px;
   border-radius: 20px;
   border: 1px solid rgba(255,255,255,.15);
-  text-align: center;
   width: 300px;
+  text-align: center;
   box-shadow: 0 25px 80px rgba(0,0,0,.6);
 }
 
 .profile-card img {
   width: 100%;
-  border-radius: 15px;
+  border-radius: 14px;
   margin-bottom: 15px;
 }
 
 .social a {
-  margin: 0 8px;
   font-size: 1.4rem;
+  margin: 0 10px;
   color: white;
 }
 
-/* ===== INFO CARDS ===== */
+/* ============ CARDS ============ */
 
 .cards {
+  padding: 40px 80px;
   display: grid;
   grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
-  padding: 40px 80px;
   gap: 20px;
 }
 
 .card {
   background: rgba(255,255,255,.05);
   padding: 20px;
-  border-radius: 14px;
+  border-radius: 15px;
   border: 1px solid rgba(255,255,255,.15);
-  text-align: center;
   transition: .4s;
 }
 
@@ -162,15 +187,17 @@ body {
   transform: translateY(-6px);
 }
 
-/* ===== MOBILE ===== */
+/* ============ MOBILE ============ */
 
 @media(max-width:900px) {
-  .hero {
-    flex-direction: column;
-    padding: 40px;
-  }
 
-  .navbar {
-    padding: 20px 40px;
-  }
+.hero {
+  flex-direction: column;
+  padding: 40px;
+}
+
+.navbar {
+  padding: 20px 40px;
+}
+
 }
