@@ -1,28 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Abhinav V A</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
+<title>Abhinav V A</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <link rel="stylesheet" href="style.css"/>
+<link rel="stylesheet" href="style.css">
 
-  <!-- Icons -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 
 <body>
 
-<!-- LOADER -->
+<!-- ================= LOADER ================= -->
+
 <div id="loader">
+
   <div class="runway"></div>
-  <div class="plane">✈️</div>
+
+  <!-- SVG Plane -->
+  <svg id="planeSVG" viewBox="0 0 512 512">
+    <defs>
+      <linearGradient id="planeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#38bdf8"/>
+        <stop offset="100%" stop-color="#facc15"/>
+      </linearGradient>
+    </defs>
+
+    <path fill="url(#planeGrad)"
+      d="M476 256L36 204l-12 36 172 40 0 88
+         44 12 24-76 172 40z"/>
+  </svg>
+
   <span class="loading-text">Preparing for Departure…</span>
+
+  <audio id="jetSound" src="takeoff.mp3" preload="auto"></audio>
+
 </div>
 
-<!-- NAVBAR -->
+<!-- ================= NAV ================= -->
+
 <header class="navbar">
   <div class="logo">ABHINAV V A</div>
+
   <nav>
     <a href="#">Flight Brief</a>
     <a href="#">Systems</a>
@@ -31,10 +52,12 @@
   </nav>
 </header>
 
-<!-- HERO -->
+<!-- ================= HERO ================= -->
+
 <section class="hero">
 
   <div class="hero-left">
+
     <h1>Hey, I'm <span>Abhinav</span> 👋</h1>
 
     <p class="subtitle">
@@ -51,52 +74,52 @@
     <div class="cta">
       <button>Contact Me</button>
       <button class="secondary">Flight Log</button>
+
       <a href="https://github.com/YOURUSERNAME" target="_blank">
         <i class="fa-brands fa-github"></i>
       </a>
     </div>
+
   </div>
 
   <!-- PROFILE CARD -->
+
   <div class="profile-card">
 
-    <img src="assets/avatar.png" alt="Avatar"/>
+    <img src="avatar.png">
 
     <h3>Abhinav V A</h3>
+
     <p>Aviation Enthusiast • Hobbyist Developer</p>
 
     <div class="social">
+
       <a href="#"><i class="fa-solid fa-envelope"></i></a>
+
       <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+
       <a href="https://www.strava.com/athletes/YOURID" target="_blank">
         <i class="fa-brands fa-strava"></i>
       </a>
+
     </div>
+
   </div>
 
 </section>
 
-<!-- INFO CARDS -->
+<!-- ================= INFO CARDS ================= -->
+
 <section class="cards">
 
-  <div class="card">
-    ✈️ <span>Aviation Enthusiast</span>
-  </div>
-
-  <div class="card">
-    💻 <span>Hobbyist Developer</span>
-  </div>
-
-  <div class="card">
-    🚴 <span>Cycling Enthusiast</span>
-  </div>
-
-  <div class="card">
-    📍 <span>Kerala, India</span>
-  </div>
+  <div class="card">✈️ Aviation Enthusiast</div>
+  <div class="card">💻 Hobbyist Developer</div>
+  <div class="card">🚴 Cycling Enthusiast</div>
+  <div class="card">📍 Kerala, India</div>
 
 </section>
 
 <script src="script.js"></script>
+
 </body>
 </html>
