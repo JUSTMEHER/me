@@ -1,11 +1,8 @@
 import React, { memo } from 'react';
 import { Link } from 'react-router-dom';
 import { Server } from '@/api/server/getServer';
-import { css } from 'styled-components/macro';
-import styled from 'styled-components/macro';
-import tw from 'twin.macro';
-import GreyRowBox from '@/components/elements/GreyRowBox';
-import Spinner from '@/components/elements/Spinner';
+import { ServerStatus } from '@/api/server/types';
+import styled, { css } from 'styled-components/macro';
 import { bytesToString, ip, mbToBytes } from '@/lib/formatters';
 import isEqual from 'react-fast-compare';
 
@@ -50,17 +47,17 @@ const Row = styled(Link)`
     }
 `;
 
-const StatusDot = styled.div<{ $status: 'online' | 'offline' | 'starting' | 'stopping' }>`
+const StatusDot = styled.div<{ $status: string }>`
     width: 9px;
     height: 9px;
     border-radius: 50%;
     flex-shrink: 0;
 
-    ${({ $status }) => $status === 'online' && css`
+    ${({ $status }) => $status === 'running' && css`
         background: #00e5a0;
         box-shadow: 0 0 8px rgba(0, 229, 160, 0.6);
     `}
-    ${({ $status }) => $status === 'offline' && css`
+    ${({ $status }) => ($status === 'offline' || $status === 'null') && css`
         background: #ff4757;
         box-shadow: 0 0 8px rgba(255, 71, 87, 0.5);
     `}
@@ -87,6 +84,9 @@ const ServerIcon = styled.div`
     justify-content: center;
     flex-shrink: 0;
     font-size: 1rem;
+    color: #00b4ff;
+    font-weight: 700;
+    font-family: 'Sora', sans-serif;
 `;
 
 const ServerName = styled.p`
@@ -112,7 +112,7 @@ const ServerAddress = styled.p`
 const StatsGrid = styled.div`
     display: flex;
     align-items: center;
-    gap: 1.5rem;
+    gap: 1.25rem;
     margin-left: auto;
     flex-shrink: 0;
 
@@ -121,71 +121,71 @@ const StatsGrid = styled.div`
     }
 `;
 
-const StatItem = styled.div`
+const StatChip = styled.div`
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    gap: 2px;
-    min-width: 80px;
+    gap: 1px;
+    min-width: 72px;
 `;
 
 const StatValue = styled.span`
     font-family: 'Sora', sans-serif;
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     font-weight: 600;
     color: #e2eaf7;
 `;
 
 const StatLabel = styled.span`
     font-family: 'Sora', sans-serif;
-    font-size: 0.65rem;
+    font-size: 0.62rem;
     font-weight: 500;
     color: #3d4f6e;
     text-transform: uppercase;
     letter-spacing: 0.06em;
 `;
 
-const ProgressWrap = styled.div`
-    height: 3px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 2px;
-    overflow: hidden;
-    width: 80px;
-    margin-top: 3px;
-`;
+const StatusBadge = styled.span<{ $status: string }>`
+    font-family: 'Sora', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 0.2rem 0.55rem;
+    border-radius: 6px;
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
 
-const ProgressBar = styled.div<{ $pct: number; $warn?: boolean }>`
-    height: 100%;
-    border-radius: 2px;
-    width: ${({ $pct }) => Math.min($pct, 100)}%;
-    background: ${({ $warn, $pct }) =>
-        $pct > 90 ? 'linear-gradient(90deg, #ff4757, #ff6b6b)' :
-        $warn ? 'linear-gradient(90deg, #ffb300, #ffd000)' :
-        'linear-gradient(90deg, #00b4ff, #0088cc)'};
-    box-shadow: ${({ $pct }) => $pct > 90 ? '0 0 6px rgba(255,71,87,0.4)' : '0 0 6px rgba(0,180,255,0.3)'};
-    transition: width 0.5s ease;
+    ${({ $status }) => $status === 'running' && css`
+        background: rgba(0, 229, 160, 0.1);
+        color: #00e5a0;
+        border: 1px solid rgba(0, 229, 160, 0.2);
+    `}
+    ${({ $status }) => ($status === 'offline' || $status === 'null') && css`
+        background: rgba(255, 71, 87, 0.1);
+        color: #ff4757;
+        border: 1px solid rgba(255, 71, 87, 0.2);
+    `}
+    ${({ $status }) => ($status === 'starting' || $status === 'stopping') && css`
+        background: rgba(255, 179, 0, 0.1);
+        color: #ffb300;
+        border: 1px solid rgba(255, 179, 0, 0.2);
+    `}
 `;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-type Status = 'online' | 'offline' | 'starting' | 'stopping';
-
-function getStatus(status: string | undefined): Status {
+function humanStatus(status: ServerStatus | null): string {
     switch (status) {
-        case 'running': return 'online';
-        case 'starting': return 'starting';
-        case 'stopping': return 'stopping';
-        default: return 'offline';
+        case 'running':  return 'Online';
+        case 'starting': return 'Starting';
+        case 'stopping': return 'Stopping';
+        default:         return 'Offline';
     }
 }
 
-function statusLabel(s: Status): string {
-    switch (s) {
-        case 'online': return 'Online';
-        case 'starting': return 'Starting';
-        case 'stopping': return 'Stopping';
-        default: return 'Offline';
-    }
+function formatLimit(value: number, unit: string): string {
+    if (value === 0) return '\u221e';
+    if (unit === 'mb') return bytesToString(mbToBytes(value));
+    return `${value}${unit}`;
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -196,70 +196,49 @@ type Props = {
 };
 
 const ServerRow = ({ server, className }: Props) => {
-    const status = getStatus(server.status);
+    const defaultAlloc = server.allocations.find(a => a.isDefault);
+    const statusStr = server.status ?? 'offline';
 
-    const cpuPct = server.limits.cpu > 0
-        ? Math.round((server.cpu / (server.limits.cpu * 10)) * 100)
-        : Math.round(server.cpu / 10);
+    const ramLimit  = formatLimit(server.limits.memory, 'mb');
+    const diskLimit = formatLimit(server.limits.disk, 'mb');
+    const cpuLimit  = server.limits.cpu === 0 ? '\u221e' : `${server.limits.cpu}%`;
 
-    const ramUsed = bytesToString(mbToBytes(server.memory));
-    const ramLimit = server.limits.memory > 0 ? bytesToString(mbToBytes(server.limits.memory)) : '∞';
-    const ramPct = server.limits.memory > 0
-        ? Math.round((server.memory / server.limits.memory) * 100)
-        : 0;
-
-    const diskUsed = bytesToString(mbToBytes(server.disk));
-    const diskLimit = server.limits.disk > 0 ? bytesToString(mbToBytes(server.limits.disk)) : '∞';
-    const diskPct = server.limits.disk > 0
-        ? Math.round((server.disk / server.limits.disk) * 100)
-        : 0;
+    const initial = server.name.charAt(0).toUpperCase();
 
     return (
         <Row to={`/server/${server.id}`} className={className}>
-            <StatusDot $status={status} />
+            <StatusDot $status={statusStr} />
 
-            <ServerIcon>🖥️</ServerIcon>
+            <ServerIcon>{initial}</ServerIcon>
 
             <div style={{ flex: 1, minWidth: 0 }}>
                 <ServerName>{server.name}</ServerName>
                 <ServerAddress>
-                    {ip(server.allocations.filter(a => a.isDefault)[0]?.ip ?? '')}
-                    :{server.allocations.filter(a => a.isDefault)[0]?.port ?? ''}
-                    &nbsp;·&nbsp;
-                    <span style={{ color: status === 'online' ? '#00e5a0' : status === 'offline' ? '#ff4757' : '#ffb300' }}>
-                        {statusLabel(status)}
-                    </span>
+                    {defaultAlloc ? `${ip(defaultAlloc.ip)}:${defaultAlloc.port}` : 'No allocation'}
+                    {server.node && <>&nbsp;&middot;&nbsp;{server.node}</>}
                 </ServerAddress>
             </div>
 
             <StatsGrid>
-                {/* CPU */}
-                <StatItem>
-                    <StatValue>{server.cpu > 0 ? `${(server.cpu / 100).toFixed(1)}%` : '—'}</StatValue>
-                    <ProgressWrap>
-                        <ProgressBar $pct={cpuPct} $warn={cpuPct > 75} />
-                    </ProgressWrap>
+                <StatChip>
+                    <StatValue>{cpuLimit}</StatValue>
                     <StatLabel>CPU</StatLabel>
-                </StatItem>
+                </StatChip>
 
-                {/* RAM */}
-                <StatItem>
-                    <StatValue>{server.memory > 0 ? ramUsed : '—'}</StatValue>
-                    <ProgressWrap>
-                        <ProgressBar $pct={ramPct} $warn={ramPct > 75} />
-                    </ProgressWrap>
-                    <StatLabel>of {ramLimit}</StatLabel>
-                </StatItem>
+                <StatChip>
+                    <StatValue>{ramLimit}</StatValue>
+                    <StatLabel>RAM</StatLabel>
+                </StatChip>
 
-                {/* Disk */}
-                <StatItem>
-                    <StatValue>{server.disk > 0 ? diskUsed : '—'}</StatValue>
-                    <ProgressWrap>
-                        <ProgressBar $pct={diskPct} $warn={diskPct > 75} />
-                    </ProgressWrap>
-                    <StatLabel>of {diskLimit}</StatLabel>
-                </StatItem>
+                <StatChip>
+                    <StatValue>{diskLimit}</StatValue>
+                    <StatLabel>Disk</StatLabel>
+                </StatChip>
             </StatsGrid>
+
+            <StatusBadge $status={statusStr}>
+                {humanStatus(server.status)}
+            </StatusBadge>
         </Row>
     );
 };
