@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('./components/head') %>
+<style>
+.store-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 4px; }
+.store-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.store-card:hover {
+    border-color: var(--accent-dim);
+    box-shadow: 0 4px 24px rgba(56,182,255,0.08);
+}
+.store-card-icon {
+    font-size: 1.5rem;
+    margin-bottom: 12px;
+    display: block;
+}
+.store-card-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+.store-card-sub {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+}
+.store-select {
+    width: 100%;
+    margin-bottom: 16px;
+}
+</style>
+<body>
+<div class="container-scroller">
+    <%- include('./components/sidebar') %>
+    <div class="container-fluid page-body-wrapper">
+        <%- include('./components/topnav') %>
+        <div class="main-panel">
+            <div class="content-wrapper">
+
+                <div class="mk-page-header">
+                    <div>
+                        <h2>Resources Store</h2>
+                        <p class="text-gray">Purchase extra resources using your coins.</p>
+                    </div>
+                </div>
+
+                <% if (req.query.err && req.query.err !== "none") { %>
+                    <div class="alert" style="border-color:var(--danger);color:var(--danger);background:rgba(239,68,68,0.08)!important;">
+                        <% if (req.query.err == "CANNOTAFFORD") { %>⚠️ Insufficient coins.
+                        <% } else if (req.query.err == "MAXCPUEXCEETED") { %>⚠️ CPU limit reached.
+                        <% } else if (req.query.err == "MAXRAMEXCEETED") { %>⚠️ RAM limit reached.
+                        <% } else if (req.query.err == "MAXDISKEXCEETED") { %>⚠️ Disk limit reached.
+                        <% } else if (req.query.err == "MAXSERVERSEXCEETED") { %>⚠️ Server slot limit reached.
+                        <% } %>
+                    </div>
+                <% } else if (req.query.err == "none") { %>
+                    <div class="alert" style="border-color:var(--success);color:var(--success);background:rgba(34,197,94,0.08)!important;">
+                        ✅ Purchase successful!
+                    </div>
+                <% } %>
+
+                <div class="store-grid">
+                    <!-- CPU -->
+                    <div class="store-card">
+                        <span class="store-card-icon">⚡</span>
+                        <div class="store-card-title">CPU</div>
+                        <div class="store-card-sub">Extra processing power for your servers</div>
+                        <label>Amount</label>
+                        <select id="cpuAmount" class="form-control store-select">
+                            <option value=1><%= settings.api.client.coins.store.cpu.per %>% — <%= settings.api.client.coins.store.cpu.cost %> coins</option>
+                            <option value=2><%= settings.api.client.coins.store.cpu.per * 2 %>% — <%= settings.api.client.coins.store.cpu.cost * 2 %> coins</option>
+                        </select>
+                        <a class="mk-btn" href="javascript:buyCPU()" style="width:100%;justify-content:center;">Purchase</a>
+                    </div>
+
+                    <!-- RAM -->
+                    <div class="store-card">
+                        <span class="store-card-icon">💾</span>
+                        <div class="store-card-title">RAM</div>
+                        <div class="store-card-sub">More memory for better performance</div>
+                        <label>Amount</label>
+                        <select id="ramAmount" class="form-control store-select">
+                            <option value=1><%= settings.api.client.coins.store.ram.per %>MB — <%= settings.api.client.coins.store.ram.cost %> coins</option>
+                            <option value=2><%= settings.api.client.coins.store.ram.per * 2 %>MB — <%= settings.api.client.coins.store.ram.cost * 2 %> coins</option>
+                            <option value=3><%= settings.api.client.coins.store.ram.per * 3 %>MB — <%= settings.api.client.coins.store.ram.cost * 3 %> coins</option>
+                            <option value=4><%= settings.api.client.coins.store.ram.per * 4 %>MB — <%= settings.api.client.coins.store.ram.cost * 4 %> coins</option>
+                        </select>
+                        <a class="mk-btn" href="javascript:buyRAM()" style="width:100%;justify-content:center;">Purchase</a>
+                    </div>
+
+                    <!-- Disk -->
+                    <div class="store-card">
+                        <span class="store-card-icon">💿</span>
+                        <div class="store-card-title">Disk</div>
+                        <div class="store-card-sub">Additional storage for your server files</div>
+                        <label>Amount</label>
+                        <select id="diskAmount" class="form-control store-select">
+                            <option value=1><%= settings.api.client.coins.store.disk.per %>MB — <%= settings.api.client.coins.store.disk.cost %> coins</option>
+                            <option value=2><%= settings.api.client.coins.store.disk.per * 2 %>MB — <%= settings.api.client.coins.store.disk.cost * 2 %> coins</option>
+                            <option value=3><%= settings.api.client.coins.store.disk.per * 3 %>MB — <%= settings.api.client.coins.store.disk.cost * 3 %> coins</option>
+                            <option value=4><%= settings.api.client.coins.store.disk.per * 4 %>MB — <%= settings.api.client.coins.store.disk.cost * 4 %> coins</option>
+                            <option value=5><%= settings.api.client.coins.store.disk.per * 5 %>MB — <%= settings.api.client.coins.store.disk.cost * 5 %> coins</option>
+                        </select>
+                        <a class="mk-btn" href="javascript:buyDisk()" style="width:100%;justify-content:center;">Purchase</a>
+                    </div>
+
+                    <!-- Servers -->
+                    <div class="store-card">
+                        <span class="store-card-icon">🖥️</span>
+                        <div class="store-card-title">Server Slots</div>
+                        <div class="store-card-sub">Create more servers on your account</div>
+                        <label>Amount</label>
+                        <select id="serversAmount" class="form-control store-select">
+                            <option value=1><%= settings.api.client.coins.store.servers.per %> slot — <%= settings.api.client.coins.store.servers.cost %> coins</option>
+                            <option value=2><%= settings.api.client.coins.store.servers.per * 2 %> slots — <%= settings.api.client.coins.store.servers.cost * 2 %> coins</option>
+                            <option value=3><%= settings.api.client.coins.store.servers.per * 3 %> slots — <%= settings.api.client.coins.store.servers.cost * 3 %> coins</option>
+                            <option value=4><%= settings.api.client.coins.store.servers.per * 4 %> slots — <%= settings.api.client.coins.store.servers.cost * 4 %> coins</option>
+                        </select>
+                        <a class="mk-btn" href="javascript:buyServers()" style="width:100%;justify-content:center;">Purchase</a>
+                    </div>
+                </div>
+
+            </div>
+            <%- include('./components/footer') %>
+        </div>
+    </div>
+</div>
+<script src="/assets/vendors/select2/select2.min.js"></script>
+<script>
+    function buyCPU()     { location.href = `/buycpu?amount=${encodeURIComponent(document.getElementById("cpuAmount").value)}`; }
+    function buyRAM()     { location.href = `/buyram?amount=${encodeURIComponent(document.getElementById("ramAmount").value)}`; }
+    function buyDisk()    { location.href = `/buydisk?amount=${encodeURIComponent(document.getElementById("diskAmount").value)}`; }
+    function buyServers() { location.href = `/buyservers?amount=${encodeURIComponent(document.getElementById("serversAmount").value)}`; }
+</script>
+<%- include('./components/scripts') %>
+</body>
+</html>

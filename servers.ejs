@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('./components/head') %>
+<style>
+.server-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+.server-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.server-card:hover {
+    border-color: var(--accent-dim);
+    box-shadow: 0 4px 24px rgba(56,182,255,0.07);
+}
+.server-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.server-id {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-family: 'Courier New', monospace;
+    margin-bottom: 20px;
+}
+.server-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+.server-stat-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.8rem;
+}
+.server-stat-label { color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+.server-stat-value { color: var(--text-primary); font-weight: 500; }
+.server-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; padding-top: 4px; }
+.server-actions .mk-btn, .server-actions .mk-btn-danger, .server-actions .mk-btn-ghost {
+    font-size: 0.78rem;
+    padding: 8px 16px;
+    flex: 1;
+    justify-content: center;
+}
+
+/* Add server card */
+.server-add-card {
+    background: var(--bg-card);
+    border: 2px dashed var(--border);
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 40px 24px;
+    cursor: pointer;
+    text-decoration: none !important;
+    transition: border-color 0.2s, background 0.2s;
+    min-height: 200px;
+}
+.server-add-card:hover {
+    border-color: var(--accent);
+    background: var(--accent-glow);
+}
+.server-add-icon {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: var(--accent-glow);
+    border: 1px solid var(--accent-dim);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem;
+    color: var(--accent);
+}
+.server-add-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-sub);
+}
+</style>
+<body>
+<div class="container-scroller">
+    <%- include('./components/sidebar') %>
+    <div class="container-fluid page-body-wrapper">
+        <%- include('./components/topnav') %>
+        <div class="main-panel">
+            <div class="content-wrapper">
+
+                <div class="mk-page-header">
+                    <div>
+                        <h2>Your Servers</h2>
+                        <p class="text-gray">Manage, edit and create your servers.</p>
+                    </div>
+                </div>
+
+                <%- include('./components/alert') %>
+
+                <% if (req.query.err && req.query.err !== "none") { %>
+                    <div class="alert" style="border-color:var(--success);color:var(--success);background:rgba(34,197,94,0.08)!important;">
+                        <% if (req.query.err == "CREATEDSERVER") { %>✅ Server created successfully.
+                        <% } else if (req.query.err == "DELETEDSERVER") { %>✅ Server deleted. You can create a new one now.
+                        <% } else if (req.query.err == "MODIFYSERVER") { %>✅ Server resources updated.
+                        <% } %>
+                    </div>
+                <% } %>
+
+                <div class="server-grid">
+                    <% for (let i = 0; i < pterodactyl.relationships.servers.data.length; i++) { %>
+                    <% const srv = pterodactyl.relationships.servers.data[i].attributes; %>
+                    <div class="server-card">
+                        <div class="server-name"><%= srv.name.length > 40 ? srv.name.slice(0,40) + "..." : srv.name %></div>
+                        <div class="server-id"><%= srv.identifier %></div>
+                        <div class="server-stats">
+                            <div class="server-stat-row">
+                                <span class="server-stat-label">⚡ CPU</span>
+                                <span class="server-stat-value"><%= srv.limits.cpu / 100 %> Core(s)</span>
+                            </div>
+                            <div class="server-stat-row">
+                                <span class="server-stat-label">💾 RAM</span>
+                                <span class="server-stat-value"><%= (srv.limits.memory / 1024).toFixed(1) %> GB</span>
+                            </div>
+                            <div class="server-stat-row">
+                                <span class="server-stat-label">💿 Disk</span>
+                                <span class="server-stat-value"><%= (srv.limits.disk / 1024).toFixed(1) %> GB</span>
+                            </div>
+                        </div>
+                        <div class="server-actions">
+                            <a class="mk-btn mk-btn-ghost" href="/servers/edit?id=<%= srv.id %>">Edit</a>
+                            <% if (settings.renewals.status) { %>
+                            <a class="mk-btn" style="background:var(--warning);color:#000;" href="/renew?id=<%= srv.id %>">Renew</a>
+                            <% } %>
+                            <a class="mk-btn mk-btn-danger" href="#"
+                               onclick="if(confirm('Delete <%= srv.name %>? This cannot be undone.')) location.href='/delete?id=<%= srv.id %>'">
+                               Delete
+                            </a>
+                        </div>
+                    </div>
+                    <% } %>
+
+                    <!-- Add new server -->
+                    <a class="server-add-card" href="../servers/new">
+                        <div class="server-add-icon">+</div>
+                        <div class="server-add-label">Create New Server</div>
+                    </a>
+                </div>
+
+            </div>
+            <%- include('./components/footer') %>
+        </div>
+    </div>
+</div>
+<%- include('./components/scripts') %>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<style>
+.sidebar {
+    background: var(--bg-sidebar) !important;
+    border-right: 1px solid var(--border) !important;
+    padding-top: 70px !important;
+    width: 240px !important;
+}
+.sidebar-brand-wrapper {
+    background: var(--bg-nav) !important;
+    border-bottom: 1px solid var(--border) !important;
+    height: 60px !important;
+    padding: 0 24px !important;
+}
+.sidebar-brand {
+    font-family: 'Sora', sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 1rem !important;
+    color: var(--text-primary) !important;
+    letter-spacing: -0.02em;
+    text-decoration: none !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px;
+}
+.sidebar-brand::before {
+    content: '';
+    display: inline-block;
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--accent);
+}
+.sidebar .nav { padding: 16px 12px !important; }
+.nav-item.nav-category { margin-top: 20px !important; margin-bottom: 4px !important; }
+.nav-item.nav-category .nav-link {
+    font-size: 0.65rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.1em !important;
+    color: var(--text-muted) !important;
+    padding: 0 12px !important;
+    cursor: default !important;
+}
+.nav-item.menu-items { margin-bottom: 2px !important; }
+.nav-item.menu-items .nav-link {
+    display: flex !important;
+    align-items: center !important;
+    padding: 9px 12px !important;
+    border-radius: var(--radius) !important;
+    color: var(--text-sub) !important;
+    font-size: 0.82rem !important;
+    font-weight: 400 !important;
+    text-decoration: none !important;
+    transition: background 0.15s, color 0.15s !important;
+    gap: 10px;
+}
+.nav-item.menu-items .nav-link:hover {
+    background: var(--accent-glow) !important;
+    color: var(--accent) !important;
+}
+.nav-item.menu-items .nav-link.active {
+    background: var(--accent-glow) !important;
+    color: var(--accent) !important;
+    font-weight: 500 !important;
+}
+.menu-title { font-family: 'Sora', sans-serif !important; }
+</style>
+
+<nav class="sidebar sidebar-offcanvas" id="sidebar">
+    <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center fixed-top">
+        <a class="sidebar-brand" href="/dashboard"><%= settings.name %></a>
+    </div>
+    <ul class="nav">
+        <li class="nav-item nav-category"><span class="nav-link">Management</span></li>
+        <li class="nav-item menu-items">
+            <a class="nav-link" href="../dashboard"><span class="menu-title">Dashboard</span></a>
+        </li>
+        <li class="nav-item menu-items">
+            <a class="nav-link" href="../servers"><span class="menu-title">Your Servers</span></a>
+        </li>
+        <li class="nav-item menu-items">
+            <a class="nav-link" href="../settings"><span class="menu-title">Account Settings</span></a>
+        </li>
+
+        <li class="nav-item nav-category"><span class="nav-link">Coins & Resources</span></li>
+        <li class="nav-item menu-items">
+            <a class="nav-link" href="../store"><span class="menu-title">Resources Store</span></a>
+        </li>
+        <li class="nav-item menu-items">
+            <a class="nav-link" href="../afk"><span class="menu-title">AFK Page</span></a>
+        </li>
+        <li class="nav-item menu-items">
+            <a class="nav-link" href="../lv"><span class="menu-title">Linkvertise</span></a>
+        </li>
+        <li class="nav-item menu-items">
+            <a class="nav-link" href="../j4r"><span class="menu-title">Join for Rewards</span></a>
+        </li>
+        <li class="nav-item menu-items">
+            <a class="nav-link" href="../gift-coins"><span class="menu-title">Gift Coins</span></a>
+        </li>
+        <li class="nav-item menu-items">
+            <a class="nav-link" href="../gift-resources"><span class="menu-title">Gift Resources</span></a>
+        </li>
+        <li class="nav-item menu-items">
+            <a class="nav-link" href="../redeem"><span class="menu-title">Redeem Coupon</span></a>
+        </li>
+
+        <% if (settings.stripe.enabled == true) { %>
+        <li class="nav-item nav-category"><span class="nav-link">Billing</span></li>
+        <li class="nav-item menu-items">
+            <a class="nav-link" href="../buy"><span class="menu-title">Buy Coins</span></a>
+        </li>
+        <% } %>
+
+        <li class="nav-item nav-category"><span class="nav-link">Miscellaneous</span></li>
+        <% if (pterodactyl && pterodactyl.root_admin == true) { %>
+        <li class="nav-item menu-items">
+            <a class="nav-link" href="../admin"><span class="menu-title">Admin</span></a>
+        </li>
+        <% } %>
+        <li class="nav-item menu-items">
+            <a class="nav-link" href="../panel"><span class="menu-title">Panel</span></a>
+        </li>
+        <li class="nav-item menu-items">
+            <a class="nav-link" href="../logout"><span class="menu-title">Logout</span></a>
+        </li>
+    </ul>
+</nav>

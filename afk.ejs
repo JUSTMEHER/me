@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('./components/head') %>
+<style>
+.afk-container { max-width: 680px; margin: 0 auto; }
+.afk-hero {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    margin-bottom: 16px;
+}
+.afk-status-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+.afk-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--success);
+    box-shadow: 0 0 8px var(--success);
+    animation: pulse 2s infinite;
+}
+.afk-dot.inactive { background: var(--danger); box-shadow: 0 0 8px var(--danger); animation: none; }
+.afk-dot.warning  { background: var(--warning); box-shadow: 0 0 8px var(--warning); animation: none; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.afk-status-text { font-size: 0.82rem; color: var(--text-sub); }
+
+.afk-progress-group { margin-bottom: 20px; }
+.afk-progress-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+}
+.afk-progress-bar {
+    height: 4px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+}
+.afk-progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 99px;
+    transition: width 0.5s ease;
+    box-shadow: 0 0 8px rgba(56,182,255,0.4);
+}
+.afk-fill-session { width: 0%; }
+.afk-fill-daily   { width: 0%; }
+
+.afk-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 24px;
+}
+.afk-stat {
+    background: var(--bg-base);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    text-align: center;
+}
+.afk-stat-val { font-size: 1.2rem; font-weight: 600; color: var(--accent); }
+.afk-stat-lbl { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-top: 2px; }
+
+/* Limit panel */
+.afk-limit {
+    display: none;
+    text-align: center;
+    padding: 32px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    margin-bottom: 16px;
+}
+.afk-limit-icon { font-size: 2.5rem; margin-bottom: 12px; }
+.afk-limit-title { font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; }
+.afk-limit-msg   { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 24px; }
+.afk-ad-label    { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 12px; }
+</style>
+<body>
+<div class="container-scroller">
+    <%- include('./components/sidebar') %>
+    <div class="container-fluid page-body-wrapper">
+        <%- include('./components/topnav') %>
+        <div class="main-panel">
+            <div class="content-wrapper">
+
+                <div class="mk-page-header">
+                    <div>
+                        <h2>AFK Page</h2>
+                        <p class="text-gray">Earn coins passively while you stay on this page.</p>
+                    </div>
+                </div>
+
+                <!-- Ad top -->
+                <div style="text-align:center;margin-bottom:20px;"><script data-zone="10799714" src="https://nap5k.com/tag.min.js"></script></div>
+
+                <div class="afk-container">
+
+                    <!-- Active panel -->
+                    <div class="afk-hero" id="afk-active-panel">
+                        <div class="afk-status-row">
+                            <div class="afk-dot" id="afk-dot"></div>
+                            <span class="afk-status-text" id="ws-status">Connected — earning coins</span>
+                        </div>
+
+                        <div class="afk-progress-group">
+                            <div class="afk-progress-header">
+                                <span>Session</span>
+                                <span><span id="dccoins">0</span> / 100 coins</span>
+                            </div>
+                            <div class="afk-progress-bar"><div class="afk-progress-fill afk-fill-session" id="bar-session"></div></div>
+                        </div>
+
+                        <div class="afk-progress-group">
+                            <div class="afk-progress-header">
+                                <span>Today</span>
+                                <span><span id="dailycoins">0</span> / 300 coins</span>
+                            </div>
+                            <div class="afk-progress-bar"><div class="afk-progress-fill afk-fill-daily" id="bar-daily"></div></div>
+                        </div>
+
+                        <div class="afk-stats">
+                            <div class="afk-stat">
+                                <div class="afk-stat-val" id="counter"><%= settings.api.arcio["afk page"].every %></div>
+                                <div class="afk-stat-lbl">Next coin (s)</div>
+                            </div>
+                            <div class="afk-stat">
+                                <div class="afk-stat-val"><%= settings.api.arcio["afk page"].coins %></div>
+                                <div class="afk-stat-lbl">Per <%= settings.api.arcio["afk page"].every %>s</div>
+                            </div>
+                            <div class="afk-stat">
+                                <div class="afk-stat-val" id="rate"><%= Math.floor((settings.api.arcio["afk page"].coins / settings.api.arcio["afk page"].every) * 3600) %></div>
+                                <div class="afk-stat-lbl">Coins / hr (max)</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Limit panel -->
+                    <div class="afk-limit" id="afk-limit-panel">
+                        <div class="afk-limit-icon" id="limit-icon">⏱️</div>
+                        <div class="afk-limit-title" id="limit-title">Limit Reached</div>
+                        <div class="afk-limit-msg"   id="limit-msg"></div>
+                        <div class="afk-ad-label">Watch an ad while you wait</div>
+                        <div style="margin:0 auto 12px;max-width:500px;"><script data-zone="10799714" src="https://nap5k.com/tag.min.js"></script></div>
+                        <div style="margin:0 auto;max-width:500px;"><script data-zone="10799714" src="https://nap5k.com/tag.min.js"></script></div>
+                    </div>
+
+                </div>
+
+                <!-- Side ad -->
+                <div style="text-align:center;margin-top:20px;"><script data-zone="10799714" src="https://nap5k.com/tag.min.js"></script></div>
+
+                <script>
+                    <%- typeof arcioafktext !== "undefined" ? arcioafktext : "" %>
+
+                    const TICK = <%= settings.api.arcio["afk page"].every %>;
+                    let _timer = TICK, _limitHit = false;
+
+                    setInterval(function() {
+                        if (_limitHit) return;
+                        _timer--;
+                        if (_timer <= 0) _timer = TICK;
+                        document.getElementById('counter').textContent = _timer;
+                    }, 1000);
+
+                    function hookWS() {
+                        if (!window._afkws) return setTimeout(hookWS, 200);
+                        window._afkws.addEventListener('message', function(e) {
+                            if (e.data === 'SESSION_LIMIT' || e.data === 'DAILY_LIMIT') {
+                                _limitHit = true;
+                                showLimit(e.data);
+                                return;
+                            }
+                            try {
+                                const d = JSON.parse(e.data);
+                                if (d.type === 'update') {
+                                    document.getElementById('dccoins').textContent   = d.sessionCoins;
+                                    document.getElementById('dailycoins').textContent = d.dailyCoins;
+                                    document.getElementById('bar-session').style.width = Math.min(100, (d.sessionCoins / 100) * 100) + '%';
+                                    document.getElementById('bar-daily').style.width   = Math.min(100, (d.dailyCoins   / 300) * 100) + '%';
+                                }
+                            } catch {}
+                        });
+                        window._afkws.addEventListener('close', function() {
+                            if (!_limitHit) {
+                                document.getElementById('afk-dot').className = 'afk-dot inactive';
+                                document.getElementById('ws-status').textContent = 'Disconnected';
+                            }
+                        });
+                    }
+
+                    function showLimit(type) {
+                        document.getElementById('afk-active-panel').style.display = 'none';
+                        document.getElementById('afk-limit-panel').style.display  = 'block';
+                        document.getElementById('afk-dot').className = 'afk-dot warning';
+                        if (type === 'SESSION_LIMIT') {
+                            document.getElementById('limit-icon').textContent  = '⏱️';
+                            document.getElementById('limit-title').textContent = 'Session Limit Reached';
+                            document.getElementById('limit-msg').textContent   = 'You earned 100 coins this session. Refresh the page to start a new session (daily max: 300 coins).';
+                        } else {
+                            document.getElementById('limit-icon').textContent  = '🌙';
+                            document.getElementById('limit-title').textContent = 'Daily Limit Reached';
+                            document.getElementById('limit-msg').textContent   = 'You earned 300 coins today. Come back tomorrow to earn more!';
+                        }
+                    }
+
+                    hookWS();
+                </script>
+
+            </div>
+            <%- include('./components/footer') %>
+        </div>
+    </div>
+</div>
+<%- include('./components/scripts') %>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<style>
+.footer {
+    background: var(--bg-sidebar) !important;
+    border-top: 1px solid var(--border) !important;
+    padding: 16px 32px !important;
+    margin-top: auto !important;
+}
+.footer .text-muted {
+    color: var(--text-muted) !important;
+    font-size: 0.75rem !important;
+}
+.footer a { color: var(--accent) !important; text-decoration: none !important; }
+.footer a:hover { text-decoration: underline !important; }
+.footer code { color: var(--accent) !important; background: transparent !important; font-size: 0.75rem !important; }
+#loadtime { color: var(--text-muted); font-size: 0.75rem; }
+</style>
+
+<footer class="footer">
+    <div class="d-sm-flex justify-content-between align-items-center">
+        <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">
+            © <%= settings.name %> &nbsp;·&nbsp; Powered by <a href="https://github.com/OpenHeliactyl/Heliactyl">Heliactyl</a>
+        </span>
+        <span class="text-muted d-block text-right text-sm-left d-sm-inline-block">
+            <code>v<%= settings.version.replace(/"/g, `\\\\"`) %></code> &nbsp;·&nbsp; <span id="loadtime"></span>
+        </span>
+    </div>
+</footer>
+<script>
+    var _before = new Date().getTime();
+    window.addEventListener('load', function() {
+        var _after = new Date().getTime();
+        var el = document.getElementById("loadtime");
+        if (el) el.innerHTML = ((_after - _before) / 1000).toFixed(2) + "s load";
+    });
+</script>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('./components/head') %>
+<body>
+<div class="container-scroller">
+    <%- include('./components/sidebar') %>
+    <div class="container-fluid page-body-wrapper">
+        <%- include('./components/topnav') %>
+        <div class="main-panel">
+            <div class="content-wrapper">
+
+                <div class="mk-page-header">
+                    <div>
+                        <h2>Dashboard</h2>
+                        <p class="text-gray">Overview of your resources and account.</p>
+                    </div>
+                </div>
+
+                <%- include('./components/alert') %>
+
+                <% if (req.query.err == "ALREADY_OPEN") { %>
+                    <div class="alert">⚠️ You can't open multiple tabs!</div>
+                <% } else if (req.query.err === "CANNOTAFFORDRENEWAL") { %>
+                    <div class="alert" style="border-color:var(--warning);color:var(--warning);background:rgba(245,158,11,0.08)!important;">
+                        You need at least <%= settings.renewals.cost %> coins to renew a server.
+                    </div>
+                <% } if (req.query.success === 'RENEWED') { %>
+                    <div class="alert" style="border-color:var(--success);color:var(--success);background:rgba(34,197,94,0.08)!important;">
+                        ✅ Server renewal successful!
+                    </div>
+                <% } if (req.session.newaccount || req.session.password) { %>
+                    <div class="alert">
+                        <% if (req.session.newaccount) { %>👋 Welcome! You're a first-time user.<br><% } %>
+                        <% if (req.session.password) { %>
+                            Your password has been set to <code style="color:var(--accent)"><%= req.session.password %></code> — save it now, or reset it via Account Settings.
+                        <% } else { %>
+                            Head to <a href="/settings" style="color:var(--accent)">Account Settings</a> to create a password.
+                        <% } %>
+                    </div>
+                <% } %>
+
+                <!-- Ad -->
+                <div style="text-align:center;margin:0 0 24px;"><script data-zone="10799714" src="https://nap5k.com/tag.min.js"></script></div>
+
+                <%- include('./components/status') %>
+
+                <!-- Ad -->
+                <div style="text-align:center;margin:24px 0;"><script data-zone="10799714" src="https://nap5k.com/tag.min.js"></script></div>
+
+                <div class="row" style="gap:0;">
+                    <div class="col-md-6 grid-margin stretch-card">
+                        <div class="card">
+                            <div class="card-body"><%- include('./boxes/1') %></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 grid-margin stretch-card">
+                        <div class="card">
+                            <div class="card-body"><%- include('./boxes/2') %></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ad -->
+                <div style="text-align:center;margin:8px 0;"><script data-zone="10799714" src="https://nap5k.com/tag.min.js"></script></div>
+
+            </div>
+            <%- include('./components/footer') %>
+        </div>
+    </div>
+</div>
+<%- include('./components/scripts') %>
+</body>
+</html>
