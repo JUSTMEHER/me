@@ -1,14 +1,13 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars, faCogs, faLayerGroup, faSignOutAlt, faBell } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faCogs, faLayerGroup, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import { useStoreState } from 'easy-peasy';
 import { ApplicationStore } from '@/state';
 import SearchContainer from '@/components/dashboard/search/SearchContainer';
 import http from '@/api/http';
 import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
-import Avatar from '@/components/Avatar';
 import styled from 'styled-components/macro';
 
 const NavBar = styled.nav`
@@ -70,7 +69,7 @@ const NavActions = styled.div`
     gap: 0.5rem;
 `;
 
-const NavButton = styled.button`
+const navButtonStyle = `
     background: rgba(0, 180, 255, 0.06);
     border: 1px solid rgba(0, 180, 255, 0.1);
     border-radius: 8px;
@@ -83,6 +82,7 @@ const NavButton = styled.button`
     cursor: pointer;
     transition: all 0.15s ease;
     font-size: 0.85rem;
+    text-decoration: none;
 
     &:hover {
         background: rgba(0, 180, 255, 0.12);
@@ -91,45 +91,14 @@ const NavButton = styled.button`
     }
 `;
 
-const NavLink2 = styled(NavButton).attrs({ as: Link })`
-    text-decoration: none;
-`;
+const NavButton = styled.button`${navButtonStyle}`;
+const NavLinkButton = styled(Link)`${navButtonStyle}`;
 
 const HamburgerBtn = styled(NavButton)`
     display: none;
 
     @media (max-width: 768px) {
         display: flex;
-    }
-`;
-
-const UserChip = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.25rem 0.75rem 0.25rem 0.25rem;
-    background: rgba(0, 180, 255, 0.06);
-    border: 1px solid rgba(0, 180, 255, 0.1);
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.15s ease;
-
-    &:hover {
-        background: rgba(0, 180, 255, 0.1);
-        border-color: rgba(0, 180, 255, 0.2);
-    }
-
-    img {
-        width: 28px;
-        height: 28px;
-        border-radius: 6px;
-    }
-
-    .user-name {
-        font-family: 'Sora', sans-serif;
-        font-size: 0.8rem;
-        font-weight: 600;
-        color: #e2eaf7;
     }
 `;
 
@@ -141,7 +110,6 @@ const onTriggerNavButton = () => {
 };
 
 export default () => {
-    const name = useStoreState((state: ApplicationStore) => state.settings.data!.name);
     const rootAdmin = useStoreState((state: ApplicationStore) => state.user.data!.rootAdmin);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
 
@@ -172,13 +140,13 @@ export default () => {
 
             <NavActions>
                 {rootAdmin && (
-                    <NavLink2 to={'/admin'}>
+                    <NavLinkButton to={'/admin'}>
                         <FontAwesomeIcon icon={faCogs} />
-                    </NavLink2>
+                    </NavLinkButton>
                 )}
-                <NavLink2 to={'/'}>
+                <NavLinkButton to={'/'}>
                     <FontAwesomeIcon icon={faLayerGroup} />
-                </NavLink2>
+                </NavLinkButton>
                 <NavButton onClick={onTriggerLogout} title='Sign out'>
                     <FontAwesomeIcon icon={faSignOutAlt} />
                 </NavButton>
