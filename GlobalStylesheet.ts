@@ -27,30 +27,59 @@ export default createGlobalStyle`
         box-sizing: border-box;
     }
 
-    body {
+    /* ── Full page background ── */
+    html, body, #app {
         font-family: 'Sora', system-ui, sans-serif;
-        background-color: var(--mekudo-bg);
-        color: var(--mekudo-text);
+        background-color: #080c14 !important;
+        color: #e2eaf7 !important;
         letter-spacing: 0.01em;
         line-height: 1.6;
         margin: 0;
         padding: 0;
+        min-height: 100vh;
+    }
+
+    body {
         background-image:
-            radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0, 180, 255, 0.06) 0%, transparent 60%),
+            radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0, 180, 255, 0.07) 0%, transparent 60%),
             radial-gradient(ellipse 40% 30% at 80% 80%, rgba(0, 100, 200, 0.04) 0%, transparent 50%);
         background-attachment: fixed;
-        min-height: 100vh;
+    }
+
+    /* ── Override Pterodactyl's default gray/white backgrounds ── */
+    .bg-white,
+    [class*="bg-neutral"],
+    [class*="bg-gray"] {
+        background-color: #0d1321 !important;
+    }
+
+    /* Main content area wrapper */
+    main,
+    .main-content,
+    #main-content,
+    [class*="ContentContainer"],
+    [class*="PageContent"] {
+        background: transparent !important;
+    }
+
+    /* Pterodactyl's GreyRowBox / server list background */
+    .bg-grey-light,
+    .bg-grey,
+    [class*="grey-"],
+    [class*="GreyRow"] {
+        background: #0d1321 !important;
+        border-color: rgba(0, 180, 255, 0.08) !important;
     }
 
     h1, h2, h3, h4, h5, h6 {
         font-family: 'Sora', system-ui, sans-serif;
         font-weight: 600;
-        color: var(--mekudo-text);
+        color: #e2eaf7;
         letter-spacing: -0.02em;
     }
 
     p {
-        color: var(--mekudo-text-muted);
+        color: #6b7fa3;
         line-height: 1.7;
     }
 
@@ -73,7 +102,7 @@ export default createGlobalStyle`
         -moz-appearance: textfield !important;
     }
 
-    /* Scrollbar */
+    /* ── Scrollbar ── */
     ::-webkit-scrollbar {
         width: 6px;
         height: 6px;
@@ -98,7 +127,7 @@ export default createGlobalStyle`
         background: transparent;
     }
 
-    /* Mekudo Card Style */
+    /* ── Mekudo Card ── */
     .mekudo-card {
         background: var(--mekudo-card);
         border: 1px solid var(--mekudo-border);
@@ -112,7 +141,7 @@ export default createGlobalStyle`
         box-shadow: 0 0 30px rgba(0, 180, 255, 0.06);
     }
 
-    /* Mekudo Button */
+    /* ── Mekudo Button ── */
     .mekudo-btn {
         background: linear-gradient(135deg, #00b4ff, #0088cc);
         color: #fff;
@@ -132,13 +161,54 @@ export default createGlobalStyle`
         box-shadow: 0 6px 20px rgba(0, 180, 255, 0.35);
     }
 
-    /* Glow effect for accent elements */
+    /* ── Glow ── */
     .mekudo-glow {
         box-shadow: 0 0 20px var(--mekudo-accent-glow);
     }
 
-    /* Status indicators */
-    .status-online { color: var(--mekudo-success); }
+    /* ── Status indicators ── */
+    .status-online  { color: var(--mekudo-success); }
     .status-offline { color: var(--mekudo-danger); }
-    .status-starting { color: var(--mekudo-warning); }
+    .status-starting{ color: var(--mekudo-warning); }
+
+    /* ── Pterodactyl overrides: login page, admin area, generic panels ── */
+    .pterodactyl-box,
+    .pterodactyl-box-container {
+        background: #0d1321 !important;
+        border: 1px solid rgba(0, 180, 255, 0.08) !important;
+        border-radius: 16px !important;
+        color: #e2eaf7 !important;
+    }
+
+    /* Blue primary buttons */
+    button[class*="btn-primary"],
+    a[class*="btn-primary"] {
+        background: linear-gradient(135deg, #00b4ff, #0088cc) !important;
+        border: none !important;
+        font-family: 'Sora', sans-serif !important;
+        font-weight: 600 !important;
+    }
+
+    /* Input fields globally */
+    input:not([type="checkbox"]):not([type="radio"]),
+    textarea,
+    select {
+        background: rgba(0, 180, 255, 0.04) !important;
+        border: 1px solid rgba(0, 180, 255, 0.12) !important;
+        border-radius: 10px !important;
+        color: #e2eaf7 !important;
+        font-family: 'Sora', sans-serif !important;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+        color: #3d4f6e !important;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+        border-color: rgba(0, 180, 255, 0.4) !important;
+        box-shadow: 0 0 0 3px rgba(0, 180, 255, 0.08) !important;
+    }
 `;
